@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed – Bella Napoli Pizzeria{% endblock %}
+
+{% block content %}
+<section class="confirmation-section section">
+  <div class="container confirmation-inner">
+    <div class="confirmation-icon">✅</div>
+    <h1>Order Confirmed!</h1>
+    <p class="confirmation-sub">
+      Thank you, <strong>{{ order.customer_name }}</strong>!
+      Your order has been received and we're already preparing it.
+    </p>
+
+    <div class="confirmation-card card">
+      <div class="confirmation-row">
+        <span>Order #</span><strong>#{{ order.id }}</strong>
+      </div>
+      <div class="confirmation-row">
+        <span>Status</span>
+        <strong class="status-badge status-{{ order.status | lower }}">{{ order.status }}</strong>
+      </div>
+      <div class="confirmation-row">
+        <span>Type</span><strong>{{ order.order_type | capitalize }}</strong>
+      </div>
+      {% if order.delivery_address %}
+      <div class="confirmation-row">
+        <span>Address</span><strong>{{ order.delivery_address }}</strong>
+      </div>
+      {% endif %}
+      <div class="confirmation-row">
+        <span>Phone</span><strong>{{ order.customer_phone }}</strong>
+      </div>
+      <div class="confirmation-row">
+        <span>Email</span><strong>{{ order.customer_email }}</strong>
+      </div>
+
+      <hr />
+
+      <h3>Items Ordered</h3>
+      <table class="order-table">
+        <thead>
+          <tr><th>Item</th><th>Qty</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+          {% for item in order.items %}
+          <tr>
+            <td>{{ item.menu_item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ "%.2f"|format(item.quantity * item.unit_price) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="2">Total</td>
+            <td><strong>${{ "%.2f"|format(order.total) }}</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      {% if order.notes %}
+      <p class="order-notes"><strong>Notes:</strong> {{ order.notes }}</p>
+      {% endif %}
+    </div>
+
+    <div class="confirmation-actions">
+      <a href="{{ url_for('menu') }}" class="btn btn-outline">Back to Menu</a>
+      <a href="{{ url_for('index') }}" class="btn btn-primary">Home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

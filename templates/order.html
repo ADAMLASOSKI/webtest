@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Order Online – Bella Napoli Pizzeria{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <h1>Order Online</h1>
+    <p>Choose your items, fill in your details, and we'll handle the rest.</p>
+  </div>
+</section>
+
+<section class="order-section section">
+  <div class="container order-layout">
+
+    <!-- LEFT: Menu picker -->
+    <div class="order-menu">
+      <h2>Build Your Order</h2>
+
+      <div class="category-tabs">
+        <button class="tab-btn active" data-filter="all">🍽️ All</button>
+        <button class="tab-btn" data-filter="pizza">🍕 Pizzas</button>
+        <button class="tab-btn" data-filter="side">🥗 Sides</button>
+        <button class="tab-btn" data-filter="drink">🥤 Drinks</button>
+        <button class="tab-btn" data-filter="dessert">🍮 Desserts</button>
+      </div>
+
+      <div class="menu-grid" id="orderMenuGrid">
+        <!-- populated by JS from /api/menu -->
+        <p class="loading">Loading menu…</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: Cart + Customer form -->
+    <div class="order-sidebar">
+
+      <!-- Cart summary -->
+      <div class="order-cart card">
+        <h2>Your Order</h2>
+        <div id="orderCartItems">
+          <p class="cart-empty">No items yet. Add from the menu.</p>
+        </div>
+        <div class="order-cart-footer">
+          <span>Subtotal</span><strong id="orderSubtotal">$0.00</strong>
+        </div>
+      </div>
+
+      <!-- Customer details form -->
+      <form class="order-form card" id="orderForm" novalidate>
+        <h2>Your Details</h2>
+
+        <div class="form-group">
+          <label for="customerName">Full Name *</label>
+          <input id="customerName" type="text" class="form-control" placeholder="Jane Doe" required />
+        </div>
+
+        <div class="form-group">
+          <label for="customerEmail">Email *</label>
+          <input id="customerEmail" type="email" class="form-control" placeholder="jane@example.com" required />
+        </div>
+
+        <div class="form-group">
+          <label for="customerPhone">Phone *</label>
+          <input id="customerPhone" type="tel" class="form-control" placeholder="(239) 555-0100" required />
+        </div>
+
+        <div class="form-group">
+          <label>Order Type *</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="orderType" value="delivery" checked /> Delivery
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="orderType" value="pickup" /> Pickup
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" id="addressGroup">
+          <label for="deliveryAddress">Delivery Address *</label>
+          <input id="deliveryAddress" type="text" class="form-control" placeholder="123 Main St, Naples, FL 34102" />
+        </div>
+
+        <div class="form-group">
+          <label for="orderNotes">Special Instructions</label>
+          <textarea id="orderNotes" class="form-control" rows="2" placeholder="Allergies, extra sauce, etc."></textarea>
+        </div>
+
+        <div id="orderError" class="form-error" style="display:none;"></div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="placeOrderBtn">
+          Place Order
+        </button>
+      </form>
+
+    </div><!-- /.order-sidebar -->
+  </div><!-- /.order-layout -->
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Pass the confirmation URL base so JS can redirect after order
+  window.CONFIRMATION_URL_BASE = "{{ url_for('confirmation', order_id=0) }}".replace('/0', '/');
+</script>
+{% endblock %}

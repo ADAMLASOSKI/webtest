@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Home – Bella Napoli Pizzeria{% endblock %}
+
+{% block content %}
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <h1>Authentic Italian Pizza,<br>Delivered to Your Door</h1>
+    <p class="hero-sub">Hand-tossed dough, San Marzano tomatoes, and the finest imported ingredients.</p>
+    <div class="hero-actions">
+      <a href="{{ url_for('menu') }}" class="btn btn-primary btn-lg">View Our Menu</a>
+      <a href="{{ url_for('order') }}" class="btn btn-outline btn-lg">Order Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY US ===== -->
+<section class="features section">
+  <div class="container">
+    <h2 class="section-title">Why Bella Napoli?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🔥</span>
+        <h3>Wood-Fired Oven</h3>
+        <p>Every pie is baked in our authentic 900°F wood-fired oven for that perfect char.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🌿</span>
+        <h3>Fresh Ingredients</h3>
+        <p>We source locally grown produce and import premium Italian cheeses daily.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🚀</span>
+        <h3>Fast Delivery</h3>
+        <p>Hot pizza at your door in 30 minutes or less — guaranteed.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">❤️</span>
+        <h3>Made with Love</h3>
+        <p>Family recipes passed down through three generations of Italian cooking.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURED PIZZAS ===== -->
+<section class="featured section bg-light">
+  <div class="container">
+    <h2 class="section-title">Fan Favorites</h2>
+    <div class="menu-grid">
+      {% for item in featured %}
+      <div class="menu-card">
+        <div class="menu-card-img pizza-placeholder pizza-{{ loop.index }}">
+          <span class="pizza-emoji">🍕</span>
+        </div>
+        <div class="menu-card-body">
+          <h3>{{ item.name }}</h3>
+          <p class="menu-desc">{{ item.description }}</p>
+          <div class="menu-card-footer">
+            <span class="price">${{ "%.2f"|format(item.price) }}</span>
+            <button class="btn btn-sm btn-primary add-to-cart"
+                    data-id="{{ item.id }}"
+                    data-name="{{ item.name }}"
+                    data-price="{{ item.price }}">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="section-cta">
+      <a href="{{ url_for('menu') }}" class="btn btn-outline">See Full Menu</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="testimonials section">
+  <div class="container">
+    <h2 class="section-title">What Our Customers Say</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p class="quote">"Best pizza in town — hands down. The crust is perfectly crispy!"</p>
+        <span class="author">— Maria T.</span>
+        <div class="stars">★★★★★</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="quote">"Delivered hot and fast every single time. Love the Meat Lovers!"</p>
+        <span class="author">— James R.</span>
+        <div class="stars">★★★★★</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="quote">"The Veggie Delight converted my husband into a pizza lover!"</p>
+        <span class="author">— Priya K.</span>
+        <div class="stars">★★★★★</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA BANNER ===== -->
+<section class="cta-banner section">
+  <div class="container cta-inner">
+    <h2>Ready to Order?</h2>
+    <p>Skip the line — place your order online in seconds.</p>
+    <a href="{{ url_for('order') }}" class="btn btn-primary btn-lg">Order Now</a>
+  </div>
+</section>
+
+{% endblock %}
