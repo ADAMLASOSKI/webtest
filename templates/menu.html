@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Menu – Bella Napoli Pizzeria{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <h1>Our Menu</h1>
+    <p>Fresh ingredients, authentic recipes, made to order.</p>
+  </div>
+</section>
+
+<section class="menu-section section">
+  <div class="container">
+
+    <!-- Category filter tabs -->
+    <div class="category-tabs">
+      {% for cat in categories %}
+      <a href="{{ url_for('menu', category=cat) }}"
+         class="tab-btn {% if active == cat %}active{% endif %}">
+        {% if cat == 'all' %}🍽️ All
+        {% elif cat == 'pizza' %}🍕 Pizzas
+        {% elif cat == 'side' %}🥗 Sides
+        {% elif cat == 'drink' %}🥤 Drinks
+        {% elif cat == 'dessert' %}🍮 Desserts
+        {% endif %}
+      </a>
+      {% endfor %}
+    </div>
+
+    {% if items %}
+    <div class="menu-grid" id="menuGrid">
+      {% for item in items %}
+      <div class="menu-card" data-category="{{ item.category }}">
+        <div class="menu-card-img pizza-placeholder cat-{{ item.category }}">
+          {% if item.category == 'pizza' %}<span class="pizza-emoji">🍕</span>
+          {% elif item.category == 'side' %}<span class="pizza-emoji">🥗</span>
+          {% elif item.category == 'drink' %}<span class="pizza-emoji">🥤</span>
+          {% else %}<span class="pizza-emoji">🍮</span>{% endif %}
+        </div>
+        <div class="menu-card-body">
+          <span class="badge badge-{{ item.category }}">{{ item.category | capitalize }}</span>
+          <h3>{{ item.name }}</h3>
+          <p class="menu-desc">{{ item.description }}</p>
+          <div class="menu-card-footer">
+            <span class="price">${{ "%.2f"|format(item.price) }}</span>
+            <div class="qty-control">
+              <button class="qty-btn" onclick="changeQty(this, -1)">−</button>
+              <input class="qty-input" type="number" value="1" min="1" max="20" />
+              <button class="qty-btn" onclick="changeQty(this, 1)">+</button>
+            </div>
+            <button class="btn btn-sm btn-primary add-to-cart"
+                    data-id="{{ item.id }}"
+                    data-name="{{ item.name }}"
+                    data-price="{{ item.price }}">
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">No items found in this category.</p>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

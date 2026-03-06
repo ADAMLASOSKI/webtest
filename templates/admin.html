@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Admin – Bella Napoli Pizzeria{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <h1>Order Management</h1>
+    <p>View and update all incoming orders.</p>
+  </div>
+</section>
+
+<section class="admin-section section">
+  <div class="container">
+
+    <!-- Stats row -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-number">{{ orders | length }}</span>
+        <span class="stat-label">Total Orders</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ orders | selectattr('status', 'equalto', 'Received') | list | length }}</span>
+        <span class="stat-label">New</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ orders | selectattr('status', 'equalto', 'Preparing') | list | length }}</span>
+        <span class="stat-label">Preparing</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">${{ "%.2f"|format(orders | sum(attribute='total')) }}</span>
+        <span class="stat-label">Revenue</span>
+      </div>
+    </div>
+
+    <!-- Orders table -->
+    {% if orders %}
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Type</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Time</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+          <tr id="order-row-{{ o.id }}">
+            <td><strong>#{{ o.id }}</strong></td>
+            <td>
+              <div>{{ o.customer_name }}</div>
+              <small>{{ o.customer_phone }}</small>
+            </td>
+            <td>
+              <span class="badge badge-{{ o.order_type }}">{{ o.order_type | capitalize }}</span>
+              {% if o.delivery_address %}
+              <div><small>{{ o.delivery_address }}</small></div>
+              {% endif %}
+            </td>
+            <td>
+              <ul class="order-items-list">
+                {% for item in o.items %}
+                <li>{{ item.quantity }}× {{ item.menu_item.name }}</li>
+                {% endfor %}
+              </ul>
+            </td>
+            <td><strong>${{ "%.2f"|format(o.total) }}</strong></td>
+            <td>
+              <span class="status-badge status-{{ o.status | lower }}" id="status-{{ o.id }}">
+                {{ o.status }}
+              </span>
+            </td>
+            <td><small>{{ o.created_at.strftime('%m/%d %H:%M') }}</small></td>
+            <td>
+              <select class="status-select" data-order-id="{{ o.id }}" onchange="updateStatus(this)">
+                {% for s in ['Received', 'Preparing', 'Ready', 'Delivered', 'Cancelled'] %}
+                <option value="{{ s }}" {% if o.status == s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="empty-state">No orders yet. Share the menu link to start taking orders!</p>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function updateStatus(selectEl) {
+  const orderId = selectEl.dataset.orderId;
+  const newStatus = selectEl.value;
+  try {
+    const resp = await fetch(`/api/orders/${orderId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    if (!resp.ok) throw new Error('Failed to update');
+    const badge = document.getElementById(`status-${orderId}`);
+    badge.textContent = newStatus;
+    badge.className = `status-badge status-${newStatus.toLowerCase()}`;
+  } catch (err) {
+    alert('Could not update order status. Please try again.');
+    location.reload();
+  }
+}
+</script>
+{% endblock %}
