@@ -266,8 +266,6 @@ async function loadOrderPageMenu() {
 // Order page – category filter (JS-based, no page reload)
 // ---------------------------------------------------------------------------
 function setupOrderCategoryFilter() {
-  const tabs = document.querySelectorAll('#orderForm ~ * .tab-btn, .order-menu .tab-btn');
-  // Simpler: all tab-btns within .order-menu
   const orderMenuSection = document.querySelector('.order-menu');
   if (!orderMenuSection) return;
 
